@@ -45,9 +45,6 @@ Log::output("top.php");
             <!-- ☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★---------------------- -->
         </article>
 
-
-        <?php unset($_SESSION["login"]); ?>
-
         <footer>
             <?php Html::return_top(); ?>
             <?php Html::address(); ?>
