@@ -1,0 +1,7 @@
+wifi繋がってない時のエラー
+
+Warning: simplexml_load_file(): php_network_getaddresses: getaddrinfo failed: nodename nor servname provided, or not known in /Applications/XAMPP/xamppfiles/htdocs/camp/11/app/search.php on line 70
+
+Warning: simplexml_load_file(http://shopping.yahooapis.jp/ShoppingWebService/V1/itemSearch?appid=dj0zaiZpPVo4ZmJxQ1FKcU9IdCZzPWNvbnN1bWVyc2VjcmV0Jng9MTM-&query=dd&category_id=1&sort=-score&hits=10&offset=0): failed to open stream: php_network_getaddresses: getaddrinfo failed: nodename nor servname provided, or not known in /Applications/XAMPP/xamppfiles/htdocs/camp/11/app/search.php on line 70
+
+Warning: simplexml_load_file(): I/O warning : failed to load external entity "http://shopping.yahooapis.jp/ShoppingWebService/V1/itemSearch?appid=dj0zaiZpPVo4ZmJxQ1FKcU9IdCZzPWNvbnN1bWVyc2VjcmV0Jng9MTM-&query=dd&category_id=1&sort=-score&hits=10&offset=0" in /Applications/XAMPP/xamppfiles/htdocs/camp/11/app/search.php on line 70

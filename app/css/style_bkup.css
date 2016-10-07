@@ -1,0 +1,297 @@
+@import "reset.css";
+/** { border: 1px dotted pink; }*/
+/** {
+    padding: 0;
+    margin: 5px;
+}*/
+/*html, body, header, footer, section, article, aside, nav,
+ul, ol, li, table, th, td, div, p, pre, span, a, b, u, strong,
+form, button, input {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    /*border: 1px dotted lightgrey;
+}*/
+h1, h2, h3, h4, h5, h6, hr {
+    margin: 5px;
+    padding: 0;
+    font-weight: bold;
+}
+h1 {font-size: 200%;}
+h2 {font-size: 160%;}
+h3 {font-size: 140%;}
+h4 {font-size: 130%;}
+h5 {font-size: 120%;}
+h6 {font-size: 110%;}
+
+/* フォームパーツの色 */
+select, option, button, input, textarea {
+    color: dimgrey;
+    font-size: 100%;
+    height: 20px;
+    line-height: 20px;
+}
+
+
+html {
+    /*background: hsla(355, 95%, 92%, 1);*/
+    background: hsla(359, 80%, 91%, 1);
+    padding: 30px;
+}
+body {
+    position: relative;
+    box-sizing: border-box;
+    max-width: 800px;
+    margin: auto;
+    /*padding-left: 40px;
+    padding-right: 40px;*/
+    background: lavenderblush;
+    border-radius: 20px;
+    box-shadow: 0 0 10px 0 hsla(359, 40%, 70%, 0.3);
+    color: dimgrey;
+}
+article {
+    padding: 20px;
+    border: 1px dotted red;
+}
+div.wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 0 20px 0 hsla(359, 50%, 70%, 0.3) inset;
+    z-index: -10;
+}
+/*.wrapper_in_header {
+    box-sizing: padding-box;
+    margin: 10px;
+    margin-bottom: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: hsla(350, 95%, 93%, 1);
+    max-width: 500px;
+    border-radius: 20px;
+    border: 1px dashed white;
+    box-shadow: 0 0 0px 7px hsla(350, 95%, 93%, 1);
+    color: grey;
+}*/
+.center,.wrapper_in_header,header {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.space10px {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.space20px {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+header {
+    padding: 10px;
+}
+
+
+section {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    /*border: 1px solid purple;*/
+}
+
+footer {
+    text-align: right;
+    padding: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: steelblue;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+input[type="submit"] {
+    /*font-size: 2em;*/
+    width: 100px;
+    height: 22px;
+    background: white;
+    border: 1px solid hsla(357, 40%, 70%, 0.4);
+    border-radius: 5px;
+    /*padding: 2px;*/
+    cursor: pointer;
+    box-shadow: 0 0 2px 0 hsla(357, 40%, 70%, 0.4);
+}
+button {
+    min-width: 100px;
+    padding: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: 26px;
+    line-height: 22px;
+    background: white;
+    border: 1px solid hsla(357, 40%, 70%, 0.4);
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 0 2px 0 hsla(357, 40%, 70%, 0.4);
+}
+.link {
+    margin: 0;
+    padding: 0;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.crimson {
+    color: crimson;
+}
+span, p, a {
+    margin: 0;
+    padding: 0;
+}
+form {
+    /*margin-top: 20px;*/
+}
+form[class="button"] {
+    /*margin-top: 5px;*/
+}
+table th {
+    width: 120px;
+}
+table th:nth-child(2) {
+    width: 140px;
+}
+table th:nth-child(3) {
+    width: 90px;
+}
+table th:nth-child(4) {
+    width: 140px;
+}
+td {
+    text-align: center;
+}
+.pre {
+    white-space: pre-wrap;
+}
+
+
+nav {
+    max-width: 800px;
+    margin: auto;
+    /*margin-bottom: 10px;*/
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+}
+nav ul {
+    background: hsla(358, 95%, 93%, 1);
+    overflow: hidden;
+    height: 50px;
+}
+nav ul li {
+    list-style-type: none;
+    float: left;
+    height: 100%;
+    line-height: 50px;
+}
+nav ul li:nth-child(1) {
+    width: 50%;
+    /*border-right: 2px solid hsla(359, 40%, 70%, 0.3);*/
+    border-right: 3px solid hsla(359, 30%, 71%, .3);
+    /* ここはhtmlのカラーと一緒に調節する必要あり */
+}
+nav ul li:nth-child(2) {
+    width: 25%;
+    /*border-right: 2px solid hsla(359, 40%, 70%, 0.3);*/
+    border-right: 3px solid hsla(359, 30%, 71%, .3);
+    /* ここはhtmlのカラーと一緒に調節する必要あり */
+}
+nav ul li:nth-child(3) {
+    width: 25%;
+}
+nav a {
+    text-decoration: none;
+}
+nav a:hover {
+    text-decoration: underline;
+    color: hsla(200, 50%, 60%, 1);
+}
+nav div:hover {
+    background: hsla(350, 96%, 95%, 1);
+}
+strong {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+
+/*☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★----------------------*/
+/*yahoo API がらみ*/
+/*検索フォーム*/
+form.yahoo_api p {
+    margin: 8px;
+}
+/*検索結果の調節*/
+.index_hits {
+    margin: 8px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.index_hits button:disabled {
+    color: lightgrey;
+    cursor: default;
+}
+.index_hits p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+/*検索結果*/
+div.result_wrapper {
+    position: relative;
+    left: -20px;
+    width: 800px;
+    background: white;
+    padding: 20px;
+}
+div.Item {
+    height: 190px;
+    margin: 5px;
+    padding: 20px;
+    border: 2px dotted pink;
+    position: relative;
+}
+div.Item div.product_image {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+div.Item div.product_name {
+    position: absolute;
+    width: 540px;
+    height: 150px;
+    top: 20px;
+    left: 190px;
+}
+div.Item div.product_name h4 {
+    display: inline-block;
+    /*border: 1px solid black;*/
+    position: absolute;
+    /*height: 100px;*/
+    height: 70px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+address {
+    padding-right: 25px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    text-align: right;
+    color: hsla(358, 80%, 80%, 0.7);
+}
