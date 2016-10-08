@@ -1,17 +1,7 @@
 @import "reset.css";
-/** { border: 1px dotted pink; }*/
-/** {
-    padding: 0;
-    margin: 5px;
-}*/
-/*html, body, header, footer, section, article, aside, nav,
-ul, ol, li, table, th, td, div, p, pre, span, a, b, u, strong,
-form, button, input {
-    margin: 0px;
-    padding: 0px;
-    box-sizing: border-box;
-    /*border: 1px dotted lightgrey;
-}*/
+* {
+    font-family: gulim;
+}
 h1, h2, h3, h4, h5, h6, hr {
     margin: 5px;
     padding: 0;
@@ -28,8 +18,15 @@ h6 {font-size: 110%;}
 select, option, button, input, textarea {
     color: dimgrey;
     font-size: 100%;
+    font-weight: normal;
     height: 20px;
     line-height: 20px;
+/* フォームパーツアレンジ！ */
+    padding:6px 10px;
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius: 4px;
+    box-sizing:border-box;
 }
 
 
@@ -53,7 +50,8 @@ body {
 article {
     padding-right: 20px;
     padding-left: 20px;
-    border: 1px dotted red;
+    border-top: 2px solid hsla(359, 40%, 70%, 0.3);
+    border-bottom: 2px solid hsla(359, 40%, 70%, 0.3);
     overflow: hidden;
 }
 div.wrapper {
@@ -189,13 +187,13 @@ nav ul li {
 nav ul li:nth-child(1) {
     width: 50%;
     /*border-right: 2px solid hsla(359, 40%, 70%, 0.3);*/
-    border-right: 3px solid hsla(359, 30%, 71%, .3);
+    border-right: 2px solid hsla(359, 30%, 71%, .3);
     /* ここはhtmlのカラーと一緒に調節する必要あり */
 }
 nav ul li:nth-child(2) {
     width: 25%;
     /*border-right: 2px solid hsla(359, 40%, 70%, 0.3);*/
-    border-right: 3px solid hsla(359, 30%, 71%, .3);
+    border-right: 2px solid hsla(359, 30%, 71%, .3);
     /* ここはhtmlのカラーと一緒に調節する必要あり */
 }
 nav ul li:nth-child(3) {
@@ -249,10 +247,16 @@ form.yahoo_api {
 /*検索結果*/
 div.result_wrapper {
     position: relative;
-    left: -20px;
-    width: 800px;
+    left: -30px;
+    width: 820px;
     background: white;
     padding: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /*box-shadow: 0 0 10px 0 white;*/
+    box-shadow: 0 0 8px 0 hsla(340, 40%, 60%, .4) inset;
     overflow: hidden;
 }
 div.result_wrapper div.result_top_shadow {
@@ -312,6 +316,7 @@ footer {
     left: 0;
     margin: auto;
     padding: 40px;
+    padding-top: 43px;
     text-align: center;
     color: hsla(358, 80%, 80%, 0.7);
     /*border: 1px solid black;*/
@@ -319,10 +324,13 @@ footer {
 footer > * {
     margin-top: 5px;
 }
+address {
+    font-size: 90%;
+}
 /*--------------------☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆*/
 /*ログインページ*/
 form.login {
-    width: 300px;
+    width: 330px;
     margin: auto;
     /*border: 1px solid black;*/
 }

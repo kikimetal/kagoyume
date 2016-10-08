@@ -154,7 +154,7 @@ endif;
 
             <!-- ヒットしなかった時、検索ワードが入力されていない時の処理 -->
             <div class="result_wrapper">
-                <div class="result_top_shadow"></div>
+                <!-- <div class="result_top_shadow"></div> -->
 
                 <?php if($hits === "no_search_word"): ?>
 
@@ -169,6 +169,7 @@ endif;
                         <p class="space20px">別のキーワードで試してみて(；.；)</p>
                     </div>
 
+                <!-- ヒットした時 -->
                 <?php elseif($hits_flg === true): ?>
 
                     <!-- 検索結果の一覧 -->
@@ -193,7 +194,7 @@ endif;
                 <?php echo BR,"現在のvar_dump(_SESSION):",BR; ?>
                 <?php var_dump($_SESSION); ?>
 
-                <div class="result_bottom_shadow"></div>
+                <!-- <div class="result_bottom_shadow"></div> -->
             </div> <!-- result_wrapper -->
         </article>
 

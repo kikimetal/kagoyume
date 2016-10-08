@@ -14,10 +14,10 @@ Log::output("top.php");
 
 <!DOCTYPE html>
 <html lang="ja">
-    <?php Html::head(); ?>
+    <?php Html::head() ?>
     <body>
-        <?php Html::nav(); ?>
-        <?php Html::header("＊かごゆめ＊", TOP); ?>
+        <?php Html::nav() ?>
+        <?php Html::header("&nbsp;今日は何買う？", TOP) ?>
 
         <article class="">
         <!-- ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:. -->
@@ -46,7 +46,8 @@ Log::output("top.php");
         </article>
 
         <footer>
-            <?php Html::return_top(); ?>
+            <!-- <?php Html::return_top(); ?> -->
+            <p><a>＊かごゆめ＊</a></p>
             <?php Html::address(); ?>
             <?php Html::wrapper(); ?>
         </footer>

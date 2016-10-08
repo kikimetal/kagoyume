@@ -4,51 +4,63 @@
 ○ YahooショッピングAPIから取得したデータで、より詳細な情報 (概要や評価値)、が表示される
 ○ 「カートに追加する」ボタンがあり、クリックすると add.phpに遷移する。
 -->
+
 <?php
 require_once "../util/defineUtil.php";
 require_once "../util/dbaccessUtil.php";
 require_once "../util/scriptUtil.php";
 require_once YAHOO_API_COMMON;
-Log::output("item.php");
+Log::output(TOP."を閲覧"); // ログファイルに追記 // 引数のstringを追記、改行
 ?>
 
-<?php // 受けとった_GETで商品コード検索
+
+<?php
+// ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
+// 受けとった_GETで商品コード検索
 $access_chk = false; // 不正アクセスチェック
 
 $hits = array();
 
 if(!empty($_GET["itemcode"])):
+    // SEARCHから_GETで受け取ったitemcodeで 商品コード検索
     $url = "http://shopping.yahooapis.jp/ShoppingWebService/V1/itemLookup?appid=$appid&image_size=300&itemcode=".$_GET["itemcode"];
     $xml = simplexml_load_file($url);
     $hits = $xml->Result->Hit;
     $access_chk = true; // きちんとクエリストリングがあった時
 endif;
+// ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="ja">
-    <?php Html::head(); ?>
+    <?php session_start_anyway(); ?>
+    <?php Html::head(); // head要素まるまる // 引数に<title>入力可能 // CSS読み込みもここ ?>
     <body>
+        <?php Html::nav(); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる ?>
+        <?php Html::header("＊詳細＊"); // 大見出し // 引数のstringを表示 // 第２引数にリンク先を追加可能 ?>
 
-        <?php Html::nav(); ?>
+        <article class="center">
+            <!-- ページメイン処理 -->
 
-        <header>
-            <h3>商品詳細っ</h3>
-        </header>
+                <div class="result_wrapper">
+                    <p><h5><?= $hits[0]->Name; ?></h5></p>
+                    <div class="center"><img src=<?= $hits[0]->ExImage->Url; ?>></div>
+                </div>
+                <!-- 検索画面に戻るボタン -->
+                <form class="center space20px" action="search.php" method="post">
+                    <input type="hidden" name="mode" value="return_search">
+                    <button type="submit">検索ページに戻る</button>
+                </form>
 
-        <article>
-            <p><h5><?= $hits[0]->Name; ?></h5></p>
-            <div class="center"><img src=<?= $hits[0]->ExImage->Url; ?>></div>
-
-        <!-- 検索画面に戻るボタン -->
-        <form class="center space20px" action="search.php" method="post">
-            <input type="hidden" name="mode" value="return_search">
-            <button type="submit">検索ページに戻る</button>
-        </form>
 
         </article>
 
-        <footer><?php Html::return_top(); ?></footer>
-        <?php Html::address(); ?>
+        <footer>
+            <?php Html::return_top(); ?>
+            <?php Html::address(); ?>
+            <?php Html::wrapper(); ?>
+        </footer>
     </body>
 </html>

@@ -11,7 +11,7 @@ use kagoyume_db;
 CREATE TABLE user_t (
     userID int auto_increment primary key,
     name varchar(255) not null,
-    password varchar(255),
+    password varchar(255) not null,
     mail varchar(255),
     address text,
     total int,
@@ -27,3 +27,5 @@ CREATE TABLE buy_t (
     buyDate datetime,
     foreign key (userID) references user_t (userID)
 );
+
+INSERT INTO user_t (name, password) VALUES ("himechan", "kawaii");
