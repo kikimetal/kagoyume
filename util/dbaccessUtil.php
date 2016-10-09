@@ -44,8 +44,6 @@ class DBaccess {
                 }
             }
 
-            var_dump($sql);
-
             $stmt->execute();
             return $stmt->fetchall(PDO::FETCH_ASSOC);
 

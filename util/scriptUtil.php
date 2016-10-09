@@ -74,7 +74,8 @@ class Guest extends User {
         $db_access = new DBaccess;
         $result = $db_access->select_all("user_t", $params); // 未ヒットで空の配列、ヒットで配列、エラーでPDOEception が帰ってくる
 
-        var_dump($result);
+        // var_dump($result);
+
         if(empty($result)){
             return false;
         }elseif(is_array($result)){
@@ -215,14 +216,16 @@ function chk_post($key, $chk_value=null) {
 
 // ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
 // 上の万能バージョン を追加
-// 第１引数に割り込み、$_POST, $_GET, $_SESSION など入れれば、それに対応したものとなる、これ便利すぎ？
+// 第１引数に割り込み、$_POST, $_GET, $_SESSION など入れれば、それに対応したものとなる、これ便利すぎて上のいらないや...
 // 第２引数に指定したstrのキーの、配列[キー]の存在を確認後、第３引数と値を比較、真偽値を返す
 // 第３引数がなかった場合、_POST[第２引数]の存在を確認後、その値を返す
-function chk($array=array(), $key, $chk_value=null) {
-    if(!empty($array[$key]) and $chk_value === null){
-        return $array[$key];
+function chk($target=array(), $key=null, $value=null){
+    if(!empty($target) and $key === null and $value === null){
+        return $target;
+    }elseif(!empty($target[$key]) and $value === null){
+        return $target[$key];
     }
-    elseif(!empty($array[$key]) and $array[$key] === $chk_value){
+    elseif(!empty($target[$key]) and $target[$key] === $value){
         return true;
     }else{
         return false;

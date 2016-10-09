@@ -4,6 +4,7 @@
 ○ キーワード検索フォームが設置されている。検索 遷移先  searchで、GETメソッド。未入力
 ならエラーを表示
 -->
+
 <?php
 require_once "../util/defineUtil.php";
 require_once "../util/dbaccessUtil.php";
@@ -11,6 +12,8 @@ require_once "../util/scriptUtil.php";
 require_once YAHOO_API_COMMON;
 Log::output("top.php");
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -22,7 +25,7 @@ Log::output("top.php");
         <article class="">
         <!-- ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:. -->
             <!-- ヤフー検索フォーム -->
-                <form class="yahoo_api right" action="<?=SEARCH?>" class="Search">
+                <form class="yahoo_api right border" action="<?=SEARCH?>" class="Search">
                     <p>
                         表示順序:
                         <select name="sort">
@@ -44,6 +47,9 @@ Log::output("top.php");
                 </form>
         <!-- ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:. -->
         </article>
+
+        <?php echo "ログイン状況: ";var_dump(chk($_SESSION, "member")); ?>
+        <?php if(!chk($_SESSION, "member")){echo BR,"now user is Guest";} ?>
 
         <footer>
             <!-- <?php Html::return_top(); ?> -->

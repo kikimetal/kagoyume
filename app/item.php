@@ -10,7 +10,7 @@ require_once "../util/defineUtil.php";
 require_once "../util/dbaccessUtil.php";
 require_once "../util/scriptUtil.php";
 require_once YAHOO_API_COMMON;
-Log::output(TOP."を閲覧"); // ログファイルに追記 // 引数のstringを追記、改行
+Log::output(ITEM); // ログファイルに追記 // 引数のstringを追記、改行
 ?>
 
 
@@ -41,8 +41,9 @@ endif;
         <?php Html::nav(); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる ?>
         <?php Html::header("＊詳細＊"); // 大見出し // 引数のstringを表示 // 第２引数にリンク先を追加可能 ?>
 
-        <article class="center">
-            <!-- ページメイン処理 -->
+        <article class="center"><!-- ページメイン処理 -->
+
+            <?php if($access_chk): ?>
 
                 <div class="result_wrapper">
                     <p><h5><?= $hits[0]->Name; ?></h5></p>
@@ -54,7 +55,12 @@ endif;
                     <button type="submit">検索ページに戻る</button>
                 </form>
 
+            <?php else: ?>
 
+                <p>商品検索を行った上で商品を選択してお越しください。</p>
+                <p><a href="<?=SEARCH?>">商品検索ページはこちら。</a></p>
+
+            <?php endif; ?>
         </article>
 
         <footer>

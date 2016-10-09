@@ -48,6 +48,7 @@ body {
     color: dimgrey;
 }
 article {
+    padding: 20px;
     padding-right: 20px;
     padding-left: 20px;
     border-top: 2px solid hsla(359, 40%, 70%, 0.3);
@@ -222,7 +223,7 @@ form.yahoo_api p {
     margin: 8px;
 }
 form.yahoo_api {
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
 }
 /*検索結果の調節*/
 .index_hits {
@@ -254,7 +255,7 @@ div.result_wrapper {
     padding-left: 30px;
     padding-right: 30px;
     margin-top: 20px;
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
     /*box-shadow: 0 0 10px 0 white;*/
     box-shadow: 0 0 8px 0 hsla(340, 40%, 60%, .4) inset;
     overflow: hidden;
@@ -339,3 +340,7 @@ form.login > p {
     text-align: right;
 }
 /*--------------------☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆*/
+/*範囲確認border*/
+.border {
+    border: 1px solid red;
+}

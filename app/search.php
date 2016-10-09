@@ -97,11 +97,11 @@ endif;
         <?php Html::nav(); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる ?>
         <?php Html::header("＊かごゆめ - 商品検索＊"); // 大見出し // 引数のstringを表示 // 第２引数にリンク先を追加可能 ?>
         <article>
-            <p>$url: <br> <?php if(!empty($url)){echo $url;} ?></p>
+            <!-- <p>$url: <br> <?php if(!empty($url)){echo $url;} ?></p> -->
 
         <!-- ☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★---------------------- -->
         <!-- ヤフー検索フォーム -->
-            <form class="yahoo_api right" action="<?=SEARCH?>" class="Search">
+            <form class="yahoo_api right border" action="<?=SEARCH?>" class="Search">
                 <p>
                     表示順序:
                     <select name="sort">
@@ -152,10 +152,8 @@ endif;
             <?php endif; ?>
 
 
-            <!-- ヒットしなかった時、検索ワードが入力されていない時の処理 -->
-            <div class="result_wrapper">
-                <!-- <div class="result_top_shadow"></div> -->
-
+            <div class="result_wrapper"><!-- 商品一覧が出てくる場所、画面白い領域 -->
+                <!-- ヒットしなかった時、検索ワードが入力されていない時の処理 -->
                 <?php if($hits === "no_search_word"): ?>
 
                     <div class="Item center">
@@ -168,6 +166,7 @@ endif;
                         <p class="space40px">何もヒットしなかったよ(；.；)</p>
                         <p class="space20px">別のキーワードで試してみて(；.；)</p>
                     </div>
+
 
                 <!-- ヒットした時 -->
                 <?php elseif($hits_flg === true): ?>
@@ -190,15 +189,14 @@ endif;
                         </div>
                     <?php } ?>
                 <?php endif; ?>
-
-                <?php echo BR,"現在のvar_dump(_SESSION):",BR; ?>
-                <?php var_dump($_SESSION); ?>
-
-                <!-- <div class="result_bottom_shadow"></div> -->
             </div> <!-- result_wrapper -->
         </article>
 
+        <?php echo BR,"現在のvar_dump(_SESSION): ",BR; ?>
+        <?php var_dump($_SESSION); ?>
+
         <footer>
+            <?php exit; ?>
             <?php Html::return_top(); ?>
             <?php Html::address(); ?>
             <?php Html::wrapper(); ?>
