@@ -19,7 +19,7 @@ Log::output("top.php");
 <html lang="ja">
     <?php Html::head() ?>
     <body>
-        <?php Html::nav() ?>
+        <?php Html::nav(TOP) ?>
         <?php Html::header("&nbsp;今日は何買う？", TOP) ?>
 
         <article class="">
@@ -48,6 +48,7 @@ Log::output("top.php");
         <!-- ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:. -->
         </article>
 
+        <!-- 確認用 -->
         <?php echo "ログイン状況: ";var_dump(chk($_SESSION, "member")); ?>
         <?php if(!chk($_SESSION, "member")){echo BR,"now user is Guest";} ?>
 

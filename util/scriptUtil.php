@@ -18,12 +18,11 @@ abstract class User {
 // 会員
 class Member extends User {
     public $userID;
-    public $name;
-    // public $password;
+    public $name; // ここにパスワード含めちゃダメだよね？w
     public $mail;
     public $address;
     public $total;
-    public function __construct($array=array()) {
+    public function __construct($array=array()) { // 引数にDBから拾ったレコード array[0] を入れてあげること！
         $this->userID = chk($array, "userID");
         $this->name = chk($array, "name");
         $this->mail = chk($array, "mail");
@@ -113,16 +112,16 @@ class Html {
         <p><strong><a href="<?=TOP?>">＊かごゆめ＊ トップページ</a></strong></p>
         <?php
     }
-    // nav
-    public static function nav() {
+    // nav // 第１引数に現在ページ(define済みの定数でURL表記, e.g)ITEM, SEARCH)を入れてあげると、ログインフォームへジャンプする際に_GETでどのページから来たかを付与する
+    public static function nav($page=null) {
         session_start_anyway();
-        if(empty($_SESSION["login"])){ // login===falseだったら
+        if(empty($_SESSION["login"]) and empty($_SESSION["member"])){ // login===falseだったら
             ?>
             <nav class="center guest_nav">
                 <ul>
                     <li><a href="#"><div>ようこそ! ゲストさん!</div></a></li>
                     <li><a href="<?=REGISTRATION?>"><div>新規登録</div></a></li>
-                    <li><a href="<?=LOGIN?>"><div>ログイン</div></a></li>
+                    <li><a href="<?=LOGIN?><?php if($page){echo "?from=".$page;} ?>"><div>ログイン</div></a></li>
                 </ul>
             </nav>
             <?php
@@ -131,8 +130,8 @@ class Html {
             <nav class="center user_nav">
                 <ul>
                     <li><a href="#"><div>ようこそ! <?= $_SESSION["member"]->name ?>さん!</div></a></li>
-                    <li><a href="#"><div>マイページ</div></a></li>
-                    <li><a href="<?=LOGIN?>"><div>ログアウト</div></a></li>
+                    <li><a href="<?=MYDATA?><?php if($page){echo "?from=".$page;} ?>"><div>マイページ</div></a></li>
+                    <li><a href="<?=LOGIN?><?php if($page){echo "?from=".$page;} ?>"><div>ログアウト</div></a></li>
                 </ul>
             </nav>
             <?php
@@ -220,17 +219,38 @@ function chk_post($key, $chk_value=null) {
 // 第２引数に指定したstrのキーの、配列[キー]の存在を確認後、第３引数と値を比較、真偽値を返す
 // 第３引数がなかった場合、_POST[第２引数]の存在を確認後、その値を返す
 function chk($target=array(), $key=null, $value=null){
-    if(!empty($target) and $key === null and $value === null){
-        return $target;
-    }elseif(!empty($target[$key]) and $value === null){
+    if(!empty($target[$key]) and $value === null){
         return $target[$key];
-    }
-    elseif(!empty($target[$key]) and $target[$key] === $value){
+    }elseif(!empty($target[$key]) and $target[$key] === $value){
         return true;
     }else{
         return false;
     }
 }
+
+
+// ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:::::.:.:...........................
+function create_return_link($from_page=null){ // セッションの [from_page] をチェックし、場合分けしてurl生成
+    // $from_page = chk($_SESSION,"from_page");
+    // unset($_SESSION["from_page"]);
+    switch ($from_page):
+            case SEARCH:
+                    $refresh_link = $from_page."?mode=last_searched";
+                    break;
+            case ITEM:
+                    $refresh_link = $from_page."?itemcode=".$_SESSION["last_searched_itemcode"];
+                    break;
+            case true:
+                    $refresh_link = $from_page;
+                    break;
+            default:
+                    $refresh_link = TOP;
+                    break;
+    endswitch;
+    return $refresh_link;
+}
+// ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
+
 
 
 
@@ -262,3 +282,7 @@ function chk($target=array(), $key=null, $value=null){
 // *•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*
 // *•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*•-•*
 // *--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*
+
+// ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:::::.:.:...........................
+    // ここに処理
+// ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.

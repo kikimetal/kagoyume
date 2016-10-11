@@ -15,22 +15,15 @@ Log::output("search.php");
 ?>
 
 <?php
-// ☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★----------------------
+// ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:::::.:.:...........................
 // ページアクセス時の分岐
-if(!empty($_POST["mode"]) and $_POST["mode"] === "return_search"):
-    // item.php から戻ってきた時
-    // session_start_anyway();
-    $query = $_SESSION["search"]["query"];
-    $sort = $_SESSION["search"]["sort"];
-    $category_id = $_SESSION["search"]["category_id"];
-    // 表示結果の調節
-    $offset = $_SESSION["search"]["offset"];
 
-elseif(!empty($_POST["mode"]) and $_POST["mode"] === "change_offset"):
+if(chk($_POST, "mode", "change_offset")): // このページで次の１０件前の１０件を押してきた時
+
     $query = $_SESSION["search"]["query"];
     $sort = $_SESSION["search"]["sort"];
     $category_id = $_SESSION["search"]["category_id"];
-    // 検索結果の調節
+    // 検索結果の調節 // セッションにも格納しておく
     if($_POST["change_value"] === "back"){
         $_SESSION["search"]["offset"] = $_POST["now_offset"] - 10;
     }else{
@@ -38,24 +31,35 @@ elseif(!empty($_POST["mode"]) and $_POST["mode"] === "change_offset"):
     }
     $offset = $_SESSION["search"]["offset"];
 
-else:
-    // 普通にアクセスした時
+elseif(chk($_GET, "mode", "last_searched")): // ログインページからの帰還 // アイテム詳細ページからの帰還
+
+    $query = $_SESSION["search"]["query"];
+    $sort = $_SESSION["search"]["sort"];
+    $category_id = $_SESSION["search"]["category_id"];
+    $offset = $_SESSION["search"]["offset"]; // 表示結果の調節
+
+else: // 普通にアクセスした時
+
     $query = !empty($_GET["query"]) ? $_GET["query"] : "";
     $sort =  !empty($_GET["sort"]) && array_key_exists($_GET["sort"], $sortOrder) ? $_GET["sort"] : "-score";
     $category_id = !empty($_GET["category_id"]) && ctype_digit($_GET["category_id"]) && array_key_exists($_GET["category_id"], $categories) ? $_GET["category_id"] : 1;
 
     // _SESSIONに保存して、item.php とかに行っても検索ワードとか保持
-    // session_start_anyway();
     $_SESSION["search"]["query"] = $query;
     $_SESSION["search"]["sort"] = $sort;
     $_SESSION["search"]["category_id"] = $category_id;
-    // 表示結果の調節
-    $offset = 0;
+    $offset = 0; // 表示結果の調節
     $_SESSION["search"]["offset"] = $offset;
 
 endif;
+// ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
 
-// --------------------☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
+
+
+
+
+
+
 // 上の分岐の結果の値たちを、URLにまとめて YahooAPIに渡す
 $hits = array();
 $hits_flg = false; // 検索に成功したかどうか trueで成功
@@ -76,6 +80,10 @@ else:
         // var_dump($url);
 
     $xml = simplexml_load_file($url);
+    // サーチ条件を保存しておく // ログイン後に戻ってくる時に使ってあげる
+
+
+    // 上のどっちかで出てきた$xml に対して結果を導く分岐処理
     if($xml["totalResultsReturned"] != 0){ // 検索件数が0件でない場合,変数$hitsに検索結果を格納します。
         $hits = $xml->Result->Hit;
         $hits_flg = true; // 検索成功！
@@ -89,37 +97,35 @@ endif;
 
 
 
+
+
 <!doctype html>
 <html lang="ja">
     <?php session_start_anyway(); ?>
     <?php Html::head(); // head要素まるまる // 引数に<title>入力可能 // CSS読み込みもここ ?>
     <body>
-        <?php Html::nav(); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる ?>
+        <?php Html::nav(SEARCH); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる // 引数は現在ページの定数 ?>
         <?php Html::header("＊かごゆめ - 商品検索＊"); // 大見出し // 引数のstringを表示 // 第２引数にリンク先を追加可能 ?>
         <article>
             <!-- <p>$url: <br> <?php if(!empty($url)){echo $url;} ?></p> -->
 
         <!-- ☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★---------------------- -->
         <!-- ヤフー検索フォーム -->
-            <form class="yahoo_api right border" action="<?=SEARCH?>" class="Search">
+            <form class="yahoo_api right border" action="<?=SEARCH?>" class="Search" method="get">
                 <p>
                     表示順序:
                     <select name="sort">
-                        <?php foreach ($sortOrder as $key => $value) { ?>
-                            <!-- <option value="" selected>--</option> -->
-                            <!-- <option value="<?php echo h($key); ?>"><?php echo h($value);?></option> -->
+                        <?php foreach($sortOrder as $key => $value): ?>
                             <option value="<?php echo h($key); ?>" <?php if($sort == $key) echo "selected"; ?>><?php echo h($value);?></option>
-                        <?php } ?>
+                        <?php endforeach; ?>
                     </select>
                 </p>
                 <p>
                     カテゴリ:
                     <select name="category_id">
-                        <?php foreach ($categories as $id => $name) { ?>
-                            <!-- <option value="" selected>--</option> -->
-                            <!-- <option value="<?php echo h($id); ?>"><?php echo h($name);?></option> -->
+                        <?php foreach($categories as $id => $name): ?>
                             <option value="<?php echo h($id); ?>" <?php if($category_id == $id) echo "selected"; ?>><?php echo h($name);?></option>
-                        <?php } ?>
+                        <?php endforeach; ?>
                     </select>
                 </p>
                 <p>キーワード検索：<input type="text" name="query" value="<?php echo h($query); ?>"/></p>
@@ -136,8 +142,10 @@ endif;
                         検索結果: <?= $xml["totalResultsAvailable"]; ?> 件ヒット
                     </p>
                     <p class="border_left">
-                        <!-- 注意: $offsetの中身は0番目が1件目なので、+1 してげなきゃいけない -->
-                        <?= "表示: ",$offset + 1,"件目 〜 ",$offset + 10,"件目" ?>
+                        <!-- 注意: $offsetの中身は 0 が商品の1件目なので、+1 してげなきゃいけない -->
+                        <?php echo "表示: ",$offset + 1,"件目 〜 "; ?>
+                        <?php if($xml["totalResultsAvailable"] < $offset + 10){echo $xml["totalResultsAvailable"];}else{echo $offset + 10;}?>
+                        <?php echo "件目"; ?>
                     </p>
                     <p>
                         <form class="" action="" method="post">
@@ -145,7 +153,7 @@ endif;
                             <input type="hidden" name="mode" value="change_offset">
                             <button type="submit" name="change_value" value="back" <?php if(empty($offset) or $offset < 10){echo "disabled";} ?>><-前の10件</button>
                             (´,,･ω･,,`)
-                            <button type="submit" name="change_value" value="next" <?php if(!empty($offset) and 10 >= $xml["totalResultsAvailable"] - $offset){echo "disabled";} ?>>次の10件-></button>
+                            <button type="submit" name="change_value" value="next" <?php if(10 >= $xml["totalResultsAvailable"] or (!empty($offset) and 10 >= $xml["totalResultsAvailable"] - $offset)){echo "disabled";} ?>>次の10件-></button>
                         </form>
                     </p>
                 </div>
@@ -192,11 +200,10 @@ endif;
             </div> <!-- result_wrapper -->
         </article>
 
-        <?php echo BR,"現在のvar_dump(_SESSION): ",BR; ?>
-        <?php var_dump($_SESSION); ?>
+        <?php echo BR,"現在のvar_dump(_SESSION[search]): ",BR; ?>
+        <?php var_dump($_SESSION["search"]); ?>
 
         <footer>
-            <?php exit; ?>
             <?php Html::return_top(); ?>
             <?php Html::address(); ?>
             <?php Html::wrapper(); ?>

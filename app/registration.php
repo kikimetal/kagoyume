@@ -13,7 +13,7 @@ Log::output("registration.php"); // ログファイルに追記 // 引数のstri
     <?php session_start_anyway(); ?>
     <?php Html::head(); // head要素まるまる // 引数に<title>入力可能 // CSS読み込みもここ ?>
     <body>
-        <?php Html::nav(); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる ?>
+        <?php Html::nav(REGISTRATION); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる // 引数は現在ページの定数 ?>
         <?php Html::header("＊新規ユーザー登録＊"); // 大見出し // 引数のstringを表示 // 第２引数にリンク先を追加可能 ?>
 
         <?php if(empty($_SESSION["login"])): // ログインしてない時 ?>
