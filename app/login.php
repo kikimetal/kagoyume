@@ -14,9 +14,9 @@ session_start_anyway();
 // ここまで表示パターンが切り替わるなら、一つのflg配列変数にまとめてキー変えてチェックみたいな、それで比較した方が楽だったな...
 $from_logout_link = false;
 $from_logout_confirm = false;
-$refresh_return_page = false;
+$refresh_flg = false;
 $no_match = false;
-$refresh_link = null;
+$return_link = null;
 $from_login_link = false;
 
 
@@ -31,10 +31,20 @@ if(chk($_POST, "mode", "from_this")):
 
     // ゲストクラスよりログインを試みる
     $user = new Guest;
-    $result = $user->login($name, $password);
+    $result = $user->login($name, $password); // メンバーのインスタンス $_SESSION["member"] が生まれる
     if($result === true){ // ログインに成功
         $_SESSION["login"] = true;
-        $refresh_return_page = true; // --------------------------------仮設置--------------------直前のページに自動で戻るを実装する必要あり
+        $refresh_flg = true;
+
+        // ゲストカートの合併 + ゲストカートのクリア ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
+        if(!empty($_SESSION["guest"]["cart"])){
+            foreach ($_SESSION["guest"]["cart"] as $value) {
+                $_SESSION["member"]->cart[] = $value;
+            }
+        }
+        $_SESSION["guest"]["cart"] = array();
+        // ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
+
     }else{                          // 失敗
         $_SESSION["login"] = false;
         $no_match = true;
@@ -42,9 +52,11 @@ if(chk($_POST, "mode", "from_this")):
 
 elseif(chk($_POST, "mode", "from_logout_confirm")):
     // ログアウト確認から飛んできたので、ログアウトする
-    $_SESSION = array(); // 空にすることで ["login"] ["member"] ともに消失 すべてのカートも消去
+    // $_SESSION = array(); // 空にすることで ["login"] ["member"] ともに消失 すべてのカートも消去
+    $_SESSION["login"] = false;
+    $_SESSION["member_cart"][$_SESSION["member"]->userID] = $_SESSION["member"]->cart;
+    $_SESSION["member"] = null; // メンバーのインスタンスを削除
     $from_logout_confirm = true;
-    // $_SESSION["from_page"] = null;
 
 elseif(!empty($_SESSION["member"])):
     // ログインできている状態で、外からこのページに飛んできた時（ログアウト意思）ので、ログアウトしていいか聞く
@@ -61,17 +73,13 @@ endif;
 
 
 
+<!-- ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:::::.:.:........................... -->
 <?php
-
-// 飛んできたページを取得して_SESSIONに保持、ログイン成功時 or 戻るボタンで、ここに飛ばしてあげる。
-$_SESSION["from_page"] = chk($_GET, "from");
-
-                !!!! このままだとログイン成功した時の自動リフレッシュが強制TOPになる！要修正
-
-if($from_logout_link or $refresh_return_page or $from_login_link){ // 使うのはこの２パターン
-    $refresh_link = create_return_link(chk($_SESSION, "from_page"));
-}
+// どこから飛んできたか保存 // and リンク生成
+$return_link = save_and_create_return_link();
 ?>
+<!-- ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:. -->
+
 
 
 
@@ -80,9 +88,8 @@ if($from_logout_link or $refresh_return_page or $from_login_link){ // 使うの�
 <html lang="ja">
     <!-- ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-* -->
     <!-- ログインの成功でリフレッシュ、直前まで閲覧していたページへ -->
-    <?php if($refresh_return_page): ?>
-        <meta http-equiv="refresh" content="5;<?= $refresh_link ?>">
-        <!-- if($from_page){echo $from_page;}else{echo TOP;} --><!-- 前のやつ -->
+    <?php if($refresh_flg): ?>
+        <meta http-equiv="refresh" content="0;<?=$return_link?>">
     <?php endif; ?>
     <!-- ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-* -->
 
@@ -108,9 +115,11 @@ if($from_logout_link or $refresh_return_page or $from_login_link){ // 使うの�
                     <button type="submit">ログアウトする</button>
                 </form>
 
-                <form class="space10px" action="<?= $refresh_link ?>" method="post">
-                    <button type="submit">ふぇぇ... 戻るよぉ...</button>
-                </form>
+                    <?php if($return_link): ?>
+                            <form class="space10px" action="<?= $return_link ?>" method="post">
+                                <button type="submit">ふぇぇ... やだよぉ...</button>
+                            </form>
+                    <?php endif; ?>
 
             <?php elseif($from_logout_confirm): ?>
 
@@ -119,10 +128,10 @@ if($from_logout_link or $refresh_return_page or $from_login_link){ // 使うの�
             <?php else: ?>
 
                 <div class="space20px">
-                    <?php if($no_match): ?>
-                        <p>...そのユーザーは見つかりませんでした(><)</p>
-                        <p>パスワードとか間違ってるかもよ(><)</p>
-                    <?php endif; ?>
+                        <?php if($no_match): ?>
+                                <p>...そのユーザーは見つかりませんでした(><)</p>
+                                <p>パスワードとか間違ってるかもよ(><)</p>
+                        <?php endif; ?>
                 </div>
 
                 <form class="login" action="<?=LOGIN?>" method="post">
@@ -136,19 +145,30 @@ if($from_logout_link or $refresh_return_page or $from_login_link){ // 使うの�
                     <a href="<?=REGISTRATION?>">->新規ユーザー登録はこちら</a>
                 </p>
 
-                <form action="<?= $refresh_link ?>" method="post">
-                    <button type="submit">前ページに戻る</button>
-                </form>
-                <p><a href="<?= $refresh_link ?>"><button>戻る２</button></a></p>
+                    <?php if($return_link): ?>
+                            <!-- <form action="<?= $return_link ?>" method="post">
+                                <button type="submit">前ページに戻る</button>
+                            </form> -->
+                            <p><a href="<?= $return_link ?>"><button>前ページに戻る</button></a></p>
+                    <?php endif; ?>
 
+
+
+            <?php endif; ?>
+
+
+            <?php if(chk($_SESSION, "search")): ?>
+                    <!-- 検索画面に戻るボタン -->
+                    <form class="center space20px" action="<?=SEARCH?>" method="get">
+                        <input type="hidden" name="mode" value="last_searched">
+                        <button type="submit">検索ページに戻る</button>
+                    </form>
             <?php endif; ?>
 
             <!-- 確認用 -->
             <p>
-                現在の$_SESSION["from_page"]:<br>
-                <?php var_dump($_SESSION["from_page"]) ?>
-                <br><br>現在のreturn_link:<br>
-                <?php var_dump($refresh_link); ?>
+                <br>現在のreturn_link:<br>
+                <?php var_dump($return_link); ?>
             </p>
 
         </article>

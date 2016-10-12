@@ -20,13 +20,13 @@ session_start_anyway();
 // 受けとった_GETで商品コード検索
 $access_chk = false; // 不正アクセスチェック
 
-$hits = array();
+$hit = array();
 
 if(!empty($_GET["itemcode"])):
     // SEARCHから_GETで受け取ったitemcodeで 商品コード検索
-    $url = "http://shopping.yahooapis.jp/ShoppingWebService/V1/itemLookup?appid=$appid&image_size=300&itemcode=".$_GET["itemcode"];
+    $url = "http://shopping.yahooapis.jp/ShoppingWebService/V1/itemLookup?appid=$appid&image_size=300&itemcode=".$_GET["itemcode"]."&responsegroup=medium";
     $xml = simplexml_load_file($url);
-    $hits = $xml->Result->Hit;
+    $hit = $xml->Result->Hit[0];
     $access_chk = true; // きちんとクエリストリングがあった時
 
     // ここからログインへ飛んでも、帰ってこれるように保存
@@ -40,7 +40,7 @@ endif;
 <!DOCTYPE html>
 <html lang="ja">
     <?php session_start_anyway(); ?>
-    <?php Html::head(); // head要素まるまる // 引数に<title>入力可能 // CSS読み込みもここ ?>
+    <?php Html::head("item"); // head要素まるまる // 引数に<title>入力可能 // CSS読み込みもここ ?>
     <body>
         <?php Html::nav(ITEM); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる // 引数は現在ページの定数 ?>
         <?php Html::header("＊詳細＊"); // 大見出し // 引数のstringを表示 // 第２引数にリンク先を追加可能 ?>
@@ -49,10 +49,24 @@ endif;
 
             <?php if($access_chk): ?>
 
-                <div class="result_wrapper">
-                    <p><h5><?= $hits[0]->Name; ?></h5></p>
-                    <div class="center"><img src=<?= $hits[0]->ExImage->Url; ?>></div>
+                <div class="result_wrapper space20px">
+                    <p><h5><?= h($hit->Name); ?></h5></p>
+                    <p class="space20px">★ おかね: <?=h($hit->Price);?> 円 ★</p>
+                    <div class="center"><img src=<?= h($hit->ExImage->Url); ?>></div>
+                    <p><?= h($hit->Description); ?></p>
+                    <p class="space20px">★ レビュー平均評価: <?= h($hit->Review->Rate); ?> ★</p>
                 </div>
+
+                <form class="space20px" action="<?=ADD?>" method="post">
+                    <input type="hidden" name="itemcode" value="<?=$_SESSION["last_searched_itemcode"]?>">
+                    <input type="hidden" name="name" value="<?= h($hit->Name); ?>">
+                    <input type="hidden" name="image" value="<?= h($hit->Image->Medium); ?>">
+                    <input type="hidden" name="price" value="<?= h($hit->Price); ?>">
+                    <input type="hidden" name="mode" value="from_item">
+                    <button type="sybmit">★カートに追加する★</button>
+                </form>
+
+
                 <!-- 検索画面に戻るボタン -->
                 <form class="center space20px" action="<?=SEARCH?>" method="get">
                     <input type="hidden" name="mode" value="last_searched">
@@ -65,6 +79,7 @@ endif;
                 <p><a href="<?=SEARCH?>">商品検索ページはこちら。</a></p>
 
             <?php endif; ?>
+
         </article>
 
         <footer>

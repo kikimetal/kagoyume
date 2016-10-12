@@ -99,9 +99,9 @@ $sortOrder = array(
  * @return string html用に変換した文字列
  *
  */
-function h($str)
-{
-    return htmlspecialchars($str, ENT_QUOTES);
-}
+// function h($str)
+// {
+//     return htmlspecialchars($str, ENT_QUOTES);
+// }
 
 ?>

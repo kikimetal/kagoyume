@@ -16,14 +16,14 @@ CREATE TABLE user_t (
     address text,
     total int,
     newDate datetime,
-    deleteFlg int
+    deleteFlg int default 0
 );
 
 CREATE TABLE buy_t (
     buyID int auto_increment primary key,
-    userID int,
-    itemCode varchar(255),
-    type int,
+    userID int not null,
+    itemCode varchar(255) not null,
+    type int not null,
     buyDate datetime,
     foreign key (userID) references user_t (userID)
 );

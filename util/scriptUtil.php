@@ -22,30 +22,16 @@ class Member extends User {
     public $mail;
     public $address;
     public $total;
+    public $cart;
     public function __construct($array=array()) { // 引数にDBから拾ったレコード array[0] を入れてあげること！
         $this->userID = chk($array, "userID");
         $this->name = chk($array, "name");
         $this->mail = chk($array, "mail");
         $this->address = chk($array, "address");
         $this->total = chk($array, "total");
+        $this->cart = chk($_SESSION["member_cart"], $this->userID);
     }
-    // ログインユーザーのログアウト処理
-    public function logout() {
-            session_start_anyway();
-            $_SESSION = array();
-            // セッションを切断するにはセッションクッキーも削除する。
-            if (ini_get("session.use_cookies")) {
-                    $params = session_get_cookie_params();
-                    setcookie(session_name(), '', time() - 42000,
-                            $params["path"], $params["domain"],
-                            $params["secure"], $params["httponly"]
-                    );
-            }
-            // 最終的に、セッションを破壊する
-            session_destroy();
-    }
-
-
+    // ログインユーザーのログアウト処理 は _SESSION = array() で済むから関数いらない
 
 
     // 買い物かごへ追加
@@ -80,17 +66,29 @@ class Guest extends User {
         }elseif(is_array($result)){
             if($result[0]["deleteFlg"] != 0){
                 return false;
+            }else{
+                session_start_anyway();
+                $_SESSION["member"] = new Member($result[0]);
+                return true;
             }
-            session_start_anyway();
-            $_SESSION["member"] = new Member($result[0]);
-            return true;
         }else{
             return $result;
         }
     }
     // ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
 
-    public function entry() {}
+
+    // 登録したい カラム名 => 値 の配列を渡す
+    // 挿入成功で null エラーでエラーを返す
+    public function entry($array) {
+        $db_access = new DBaccess;
+        $result = $db_access->insert("user_t", $array);
+
+        // var_dump($result);
+
+        return $result;
+
+    }
     public function add_cart() {}
     public function delete_cart() {}
 }
@@ -119,7 +117,7 @@ class Html {
             ?>
             <nav class="center guest_nav">
                 <ul>
-                    <li><a href="#"><div>ようこそ! ゲストさん!</div></a></li>
+                    <li><a href="<?=CART?>"><div>ようこそ! ゲストさん!(カート)</div></a></li>
                     <li><a href="<?=REGISTRATION?>"><div>新規登録</div></a></li>
                     <li><a href="<?=LOGIN?><?php if($page){echo "?from=".$page;} ?>"><div>ログイン</div></a></li>
                 </ul>
@@ -129,7 +127,7 @@ class Html {
             ?>
             <nav class="center user_nav">
                 <ul>
-                    <li><a href="#"><div>ようこそ! <?= $_SESSION["member"]->name ?>さん!</div></a></li>
+                    <li><a href="<?=CART?>"><div>ようこそ! <?= $_SESSION["member"]->name ?>さん!(カート)</div></a></li>
                     <li><a href="<?=MYDATA?><?php if($page){echo "?from=".$page;} ?>"><div>マイページ</div></a></li>
                     <li><a href="<?=LOGIN?><?php if($page){echo "?from=".$page;} ?>"><div>ログアウト</div></a></li>
                 </ul>
@@ -176,8 +174,8 @@ class Html {
 class Log {
     public static function output($str) {
         session_start_anyway();
-        if(!empty($_SESSION["login"]) and !empty($_SESSION["menber"]["name"])){
-            $name = $_SESSION["menber"]["name"];
+        if(!empty($_SESSION["login"]) and !empty($_SESSION["member"]->name)){
+            $name = $_SESSION["member"]->name;
         }else{
             $name = "Guest";
         }
@@ -193,7 +191,7 @@ function session_start_anyway() {
     if(session_status() !== 2):
         $name = "kagoyume";
         session_name($name);
-        session_set_cookie_params(60 * 60 * 24); // 有効期限は24時間
+        session_set_cookie_params(60 * 60 * 24 * 7); // 有効期限は７日間
         session_start();
         session_regenerate_id();
         // echo "<p style='position: fixed; left: 10px; top: 10px;'>session_started !!</p>";
@@ -230,30 +228,50 @@ function chk($target=array(), $key=null, $value=null){
 
 
 // ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:::::.:.:...........................
-function create_return_link($from_page=null){ // セッションの [from_page] をチェックし、場合分けしてurl生成
-    // $from_page = chk($_SESSION,"from_page");
-    // unset($_SESSION["from_page"]);
-    switch ($from_page):
+function save_and_create_return_link(){ // クエリストリングの ?from= をチェックし、場合分けしてurl生成
+    if(chk($_GET, "from")){
+        $_SESSION["from_page"] = $_GET["from"];
+    }
+    $page = chk($_SESSION, "from_page");
+    switch ($page):
             case SEARCH:
-                    $refresh_link = $from_page."?mode=last_searched";
+                    $link = SEARCH."?mode=last_searched";
                     break;
             case ITEM:
-                    $refresh_link = $from_page."?itemcode=".$_SESSION["last_searched_itemcode"];
+                    $link = ITEM."?itemcode=".$_SESSION["last_searched_itemcode"];
                     break;
-            case true:
-                    $refresh_link = $from_page;
+            case CART:
+                    $link = CART;
                     break;
+            case MYDATA:
+                    $link = MYDATA;
+                    break;
+
+            // case REGISTRATION:
+            // case REGISTRATION_CONFIRM:
+            // case REGISTRATION_COMPLETE:
+            // case TOP:
+            //         $link = TOP;
+            //         break;
+            // case true:
+            //         $link = $page;
+            //         break;
             default:
-                    $refresh_link = TOP;
+                    $link = TOP;
                     break;
     endswitch;
-    return $refresh_link;
+    return $link;
 }
 // ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
 
 
 
 
+// すぺしゃるきゃらずはえっち
+function h($str)
+{
+    return htmlspecialchars($str, ENT_QUOTES);
+}
 
 
 // horizon

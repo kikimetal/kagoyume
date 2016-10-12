@@ -55,29 +55,6 @@ class DBaccess {
 
 
 
-    public function select_test($table) {
-        try {
-            $pdo = pdo_connect();
-
-            $sql = "SELECT * FROM $table";
-
-            $stmt = $pdo->prepare($sql);
-            // $stmt->bindValue(":name", $name, PDO::PARAM_STR);
-            // $stmt->bindValue(":pass", $password, PDO::PARAM_STR);
-
-            $stmt->execute();
-            return $stmt->fetchall(PDO::FETCH_ASSOC);
-
-            // pdo_disconnect();
-
-        } catch (PDOException $e) {
-            $this->pdo_disconnect($pdo);
-            return $e->getMessage();
-        }
-    }
-
-
-
 
 
     public function delete() {
@@ -91,12 +68,58 @@ class DBaccess {
             return $e->getMessage();
         }
     }
-    public function insert() {
+
+
+
+    // 第１引数にテーブル名、第２引数に挿入したい カラム名 => 値 になるように組まれた配列を入れる
+    // 成功すれば配列を、エラーならエラーを返す
+    public function insert($table, $array) {
         try {
             $pdo = $this->pdo_connect();
-            // 挿入処理
-            // ...
-            return $result;
+            $sql = "INSERT INTO $table";
+
+            // 現在時をdatetime型で取得
+            $datetime = new DateTime();
+            $date = $datetime->format('Y-m-d H:i:s');
+
+            if($array){
+                $sql .= " (";
+                $and_flg = false;
+                foreach ($array as $key => $value) {
+                    if($and_flg){
+                        $sql .= ", ";
+                    }
+                    $sql .= $key." ";
+                    $and_flg = true;
+                }
+                $sql .= ", newDate)";
+
+                $sql .= " VALUES";
+                $sql .= " (";
+                $and_flg = false;
+                foreach ($array as $key => $value) {
+                    if($and_flg){
+                        $sql .= ", ";
+                    }
+                    $sql .= ":".$key;
+                    $and_flg = true;
+                }
+                $sql .= ", :newDate)";
+            }
+
+            var_dump($sql);
+            $stmt = $pdo->prepare($sql);
+
+            if($array){
+                foreach ($array as $key => $value) {
+                    $stmt->bindValue(":".$key, $value, PDO::PARAM_STR);
+                }
+                $stmt->bindValue(":newDate", $date, PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+            return null;
+
         } catch (PDOException $e) {
             $this->pdo_disconnect($pdo);
             return $e->getMessage();

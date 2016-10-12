@@ -77,7 +77,7 @@ else:
     // $url = "http://shopping.yahooapis.jp/ShoppingWebService/V1/itemLookup?appid=$appid&itemcode=choro_IPL-2PS&image_size=600";
 
         // 確認
-        // var_dump($url);
+        var_dump($url);
 
     $xml = simplexml_load_file($url);
     // サーチ条件を保存しておく // ログイン後に戻ってくる時に使ってあげる
@@ -180,22 +180,19 @@ endif;
                 <?php elseif($hits_flg === true): ?>
 
                     <!-- 検索結果の一覧 -->
-                    <?php foreach ($hits as $hit) { ?>
+                    <?php foreach ($hits as $hit): ?>
                         <div class="Item">
-                            <!-- <h2><a href="<?php echo "item.php?itemcode=",h($hit->Code); ?>"><?php echo h($hit->Name); ?></a></h2> -->
-                            <!-- <p><a href="<?php echo h($hit->Url); ?>"><img src="<?php echo h($hit->Image->Medium); ?>" /></a><?php echo h($hit->Description); ?></p> -->
-                            <!-- /ResultSet/Result/Hit/ExImage/Url -->
                             <div class="product_image">
-                                <!-- <a href="<?php echo "item.php?itemcode=",h($hit->Code); ?>"><img src="<?php echo h($hit->Image->Medium); ?>" /></a><?php echo "<br>商品コード(",h($hit->Code),")";?> -->
                                 <a href="<?php echo "item.php?itemcode=",h($hit->Code); ?>">
                                     <img src="<?php echo h($hit->Image->Medium); ?>" />
                                 </a>
                             </div>
                             <div class="product_name">
-                                <h4><a href="<?php echo "item.php?itemcode=",h($hit->Code); ?>"><?php echo h($hit->Name); ?></a></h4>
+                                <h4><a href="<?php echo "item.php?itemcode=",h($hit->Code); ?>"><?php echo h($hit->Name); ?></a><br>おかね: <?php echo h($hit->Price); ?>円</h4>
                             </div>
                         </div>
-                    <?php } ?>
+                    <?php endforeach; ?>
+
                 <?php endif; ?>
             </div> <!-- result_wrapper -->
         </article>

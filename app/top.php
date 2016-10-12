@@ -51,6 +51,8 @@ Log::output("top.php");
         <!-- 確認用 -->
         <?php echo "ログイン状況: ";var_dump(chk($_SESSION, "member")); ?>
         <?php if(!chk($_SESSION, "member")){echo BR,"now user is Guest";} ?>
+        <?php var_dump($_SESSION["member"]->name); ?>
+        <?php var_dump($_SESSION["login"]); ?>
 
         <footer>
             <!-- <?php Html::return_top(); ?> -->
