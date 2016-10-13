@@ -8,20 +8,12 @@ session_start_anyway();
 ?>
 
 
-
-
 <?php
-// $access_chk = false;
-// if(!empty($_SESSION["member"]) and !empty($_SESSION["login"])){
-//     $access_chk = true;
-// }
 $access_chk = false;
 if(chk($_SESSION, "login") and chk($_SESSION, "member")):
     $access_chk = true;
 endif;
 ?>
-
-
 
 
 <!-- ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:::::.:.:........................... -->
@@ -32,26 +24,25 @@ $return_link = save_and_create_return_link();
 <!-- ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:. -->
 
 
-
 <!DOCTYPE html>
 <html lang="ja">
     <?php Html::head("mypage"); // head要素まるまる // 引数に<title>入力可能 // CSS読み込み済み ?>
     <body>
-        <?php Html::nav(); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる // 引数は現在ページの定数 ?>
+        <?php Html::nav(MY_DATA); // ページ最上のユーザーナビ // ログイン状態によって表示内容が変わる // 引数は現在ページの定数 ?>
         <?php Html::header("＊マイページ＊"); // 大見出し // 第１引数のstringを見出し表示 // 第２引数にリンク先を追加可能 ?>
 
         <article class="center"><!-- ページメイン処理 -->
 
             <?php if($access_chk): ?>
 
-                    <!-- ここに[member]->中身のリスト表示させる<br> -->
+                    <!-- ここに[member]->中身のリスト表示 -->
                     <h4 class="space20px">あなたの情報</h4>
                     <div style="position:relative;left:40px;width:300px;text-align:left;margin:auto;">
                         <ul style="font-size:110%;margin:auto;">
-                            <li style="margin:10px;"><p>＊名前</p><p style="position:relative;left:33px;"><?=$_SESSION["member"]->name?></p></li>
-                            <li style="margin:10px;"><p>＊めーる</p><p style="position:relative;left:33px;"><?=$_SESSION["member"]->mail?></p></li>
-                            <li style="margin:10px;"><p>＊じゅうしょ</p><p style="position:relative;left:33px;"><?=$_SESSION["member"]->address?></p></li>
-                            <li style="margin:10px;"><p>＊使ってしまったお金</p><p style="position:relative;left:33px;"><?=$_SESSION["member"]->total?$_SESSION["member"]->total:0?>円</p></li>
+                            <li style="margin:20px;"><p>＊名前</p><p style="position:relative;left:26px;"><?=$_SESSION["member"]->name?></p></li>
+                            <li style="margin:20px;"><p>＊めーる</p><p style="position:relative;left:26px;"><?=$_SESSION["member"]->mail?></p></li>
+                            <li style="margin:20px;"><p>＊じゅうしょ</p><p style="position:relative;left:26px;"><?=$_SESSION["member"]->address?></p></li>
+                            <li style="margin:20px;"><p>＊使ってしまったお金</p><p style="position:relative;left:26px;"><?=$_SESSION["member"]->total?$_SESSION["member"]->total:0?>円</p></li>
                         </ul>
                     </div>
 

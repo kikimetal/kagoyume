@@ -25,9 +25,11 @@ if(
 
     // DB INSERT !!
     $user = new Guest;
-    $user->entry($confirm_list);
+    $entry_result = $user->entry($confirm_list);
 
-    Log::output(REGISTRATION_COMPLETE, "新規ユーザーを登録");
+    if(!$entry_result){
+        Log::output(REGISTRATION_COMPLETE, "新規会員登録が行われました");
+    }
 
 } // endif
 unset($_SESSION["registration"]); // 登録に関するすべての情報を破棄 // もちろんチケットも失う
@@ -49,16 +51,25 @@ unset($_SESSION["registration"]); // 登録に関するすべての情報を破�
 
             <?php if($access_chk): ?>
 
-                <p>以下の情報で登録しました！</p>
-                <div class="space20px">
-                    <p>名前: <?=$confirm_list["name"]?></p>
-                    <p>パスワード: <?=$confirm_list["password"]?></p>
-                    <p>めーる: <?=$confirm_list["mail"]?></p>
-                    <p>じゅうしょ: <?=$confirm_list["address"]?></p>
-                </div>
+                <?php if(!$entry_result): ?>
 
-                <h4 class="space20px"><a href="<?=TOP?>">->トップへ戻る</a></h4>
-                <h4 class="space20px"><a href="<?=LOGIN?>">->ログインする</a></h4>
+                    <p>以下の情報で登録しました！</p>
+                    <div class="space20px">
+                        <p>名前: <?=$confirm_list["name"]?></p>
+                        <p>パスワード: <?=$confirm_list["password"]?></p>
+                        <p>めーる: <?=$confirm_list["mail"]?></p>
+                        <p>じゅうしょ: <?=$confirm_list["address"]?></p>
+                    </div>
+
+                    <h4 class="space20px"><a href="<?=TOP?>">->トップへ戻る</a></h4>
+                    <h4 class="space20px"><a href="<?=LOGIN?>">->ログインする</a></h4>
+
+                <?php else: ?>
+
+                    <p>DBアクセスエラーです。申し訳ございません。</p>
+                    <p>エラー内容 : <?=$entry_result?></p>
+
+                <?php endif; ?>
 
             <?php else: ?>
                 <p>不正アクセスです : トップページからやり直してください</p>

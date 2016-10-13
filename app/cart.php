@@ -30,6 +30,9 @@ $item_list = array();
 if(empty($_SESSION["login"])){
     $item_list = $_SESSION["guest_cart"];
 }else{
+    if(empty($_SESSION["member_cart"][$_SESSION["member"]->userID])){
+        $_SESSION["member_cart"][$_SESSION["member"]->userID] = array(); // 未定義でここにきちゃったら、空配列入れてあげる
+    }
     $item_list = $_SESSION["member_cart"][$_SESSION["member"]->userID];
 }
 
@@ -50,7 +53,6 @@ if(empty($_SESSION["login"])){
 
         <article class="center"><!-- ページメイン処理 -->
 
-            <!-- <?php var_dump($_SESSION["guest_cart"]); ?> -->
 
             <?php if($item_list): ?>
 
@@ -79,7 +81,7 @@ if(empty($_SESSION["login"])){
                     <div class="center">
                         <form class="space20px" action="<?=BUY_CONFIRM?>" method="post">
                             <input type="hidden" name="mode" value="buy_from_cart">
-                            <button type="submit">買っちゃう</button>
+                            <button type="submit">買っちゃう...？</button>
                         </form>
                     </div>
 

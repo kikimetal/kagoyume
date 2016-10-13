@@ -14,19 +14,21 @@ abstract class User {
 
 // 会員
 class Member extends User {
+
     public $userID;
-    public $name; // ここにパスワード含めちゃダメだよね？w
+    public $name;
     public $mail;
     public $address;
     public $total;
-    // public $cart;
+    public $password;
+
     public function __construct($array=array()) { // 引数にDBから拾ったレコード array[0] を入れてあげること！
         $this->userID = chk($array, "userID");
         $this->name = chk($array, "name");
         $this->mail = chk($array, "mail");
         $this->address = chk($array, "address");
         $this->total = chk($array, "total");
-        // $this->cart = chk($_SESSION["member_cart"], $this->userID);
+        $this->password = chk($array, "password");
     }
     // ログインユーザーのログアウト処理 は _SESSION = array() で済むから関数いらない
 
@@ -67,13 +69,32 @@ class Member extends User {
             }
         endforeach; // ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
 
-        return null;
+        return null; // 諸々書き込み成功で null を返す
     }
 
     // 購入履歴ゲット
     public function get_my_history(){
+        $arr = array("userID" => $this->userID);
         $db_access = new DBaccess;
-        $db_access->select();
+        $result = $db_access->select("buy_t", $arr, "itemCode, type, buyDate");
+        return $result; // 成功すれば配列を、エラーでエラーを返す
+    }
+
+    public function delete_me(){
+        $db_access = new DBaccess;
+        $result = $db_access->update("user_t", "deleteFlg", 1, "userID", $this->userID);
+        return $result;
+    }
+
+    public function update_info($arr=array()){
+        $db_access = new DBaccess;
+        foreach ($arr as $key => $value){
+            $result = $db_access->update("user_t", $key, $value, "userID", $this->userID);
+            if($result){
+                return $result;
+            }
+        }
+        return $result;
     }
 
 } // class Member
@@ -87,7 +108,7 @@ class Guest extends User {
     public function login($name, $password) {
         $params = array("name" => $name, "password" => $password);
         $db_access = new DBaccess;
-        $result = $db_access->select_all("user_t", $params); // 未ヒットで空の配列、ヒットで配列、エラーでPDOEception が帰ってくる
+        $result = $db_access->select("user_t", $params); // 未ヒットで空の配列、ヒットで配列、エラーでPDOEception が帰ってくる
 
         // var_dump($result);
 
@@ -114,12 +135,9 @@ class Guest extends User {
         $db_access = new DBaccess;
         $result = $db_access->insert("user_t", $array, "newDate");
 
-        // var_dump($result);
-
         return $result;
-
     }
-}
+} // class Guest
 // --------------------☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
 
 
@@ -298,7 +316,25 @@ function save_and_create_return_link(){ // クエリストリングの ?from= �
 }
 // ..................:.:.:::::::☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
 
-
+function ex_shipping_type($num){
+    switch ($num) {
+        case 1:
+            return "クレジット";
+            break;
+        case 2:
+            return "コンビニ振込";
+            break;
+        case 3:
+            return "銀行振込";
+            break;
+        case 4:
+            return "代引き";
+            break;
+        default:
+            return "error";
+            break;
+    }
+}
 
 
 // すぺしゃるきゃらずはえっち

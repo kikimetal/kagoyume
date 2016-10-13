@@ -90,8 +90,11 @@ endif;
 
 
                 <?php if(chk($_SESSION, "search")): ?>
+
+                        <?php Html::hr() ?>
+
                         <!-- 検索画面に戻るボタン -->
-                        <form class="center space20px" action="<?=SEARCH?>" method="get">
+                        <form class="right space20px" action="<?=SEARCH?>" method="get">
                             <input type="hidden" name="mode" value="last_searched">
                             <button type="submit">検索ページに戻る</button>
                         </form>

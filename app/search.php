@@ -76,8 +76,8 @@ else:
     // 商品コード検索--v
     // $url = "http://shopping.yahooapis.jp/ShoppingWebService/V1/itemLookup?appid=$appid&itemcode=choro_IPL-2PS&image_size=600";
 
-        // 確認
-        var_dump($url);
+        // 確認用
+        // var_dump($url);
 
     $xml = simplexml_load_file($url);
     // サーチ条件を保存しておく // ログイン後に戻ってくる時に使ってあげる
@@ -197,8 +197,8 @@ endif;
             </div> <!-- result_wrapper -->
         </article>
 
-        <?php echo BR,"現在のvar_dump(_SESSION[search]): ",BR; ?>
-        <?php var_dump($_SESSION["search"]); ?>
+        <!-- <?php echo BR,"現在のvar_dump(_SESSION[search]): ",BR; ?>
+        <?php var_dump($_SESSION["search"]); ?> -->
 
         <footer>
             <?php Html::return_top(); ?>

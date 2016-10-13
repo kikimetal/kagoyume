@@ -17,12 +17,16 @@ class DBaccess {
     }
 
     // SELECT * // 第１引数にテーブル名、第２引数に調べたい カラム名 => 値 になるように組まれた配列を入れる
-    // 第２引数が未指定の場合、純粋なSELECT * になる
+    // 第３引数に返して欲しいカラムを指定できる、未指定の場合、純粋なSELECT * になる
     // 成功すれば配列を、エラーならエラーを返す
-    public function select_all($table, $array=null) {
+    public function select($table, $array=null ,$column=null) {
         try {
             $pdo = $this->pdo_connect();
-            $sql = "SELECT * FROM $table";
+            if($column){
+                $sql = "SELECT $column FROM $table";
+            }else{
+                $sql = "SELECT * FROM $table";
+            }
 
             if($array){
                 $sql .= " WHERE";
@@ -108,7 +112,7 @@ class DBaccess {
                 $sql .= ", :newDate)";
             }
 
-            var_dump($sql);
+            // var_dump($sql);
 
             $stmt = $pdo->prepare($sql);
 
@@ -136,7 +140,7 @@ class DBaccess {
             $pdo = $this->pdo_connect();
             $sql = "UPDATE $table SET $column = :$column WHERE $p_key_name = :$p_key_name";
 
-            var_dump($sql);
+            // var_dump($sql);
             $stmt = $pdo->prepare($sql);
 
             $stmt->bindValue(":$column", $new_value, PDO::PARAM_INT);

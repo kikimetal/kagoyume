@@ -162,11 +162,6 @@ $return_link = save_and_create_return_link();
                     </form>
             <?php endif; ?>
 
-            <!-- 確認用 -->
-            <!-- <p>
-                <br>現在のreturn_link:<br>
-                <?php var_dump($return_link); ?>
-            </p> -->
 
         </article>
 

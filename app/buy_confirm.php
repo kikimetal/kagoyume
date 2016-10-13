@@ -64,9 +64,7 @@ endif;
             <?php elseif($access_chk): ?>
 
                 <h5 class="space20px">以下の商品を購入してよろしいですか？</h5>
-                <!-- <?php var_dump($item_list) ?> -->
 
-                <!-- <div class="space20px" style="width:400px;text-align:left;margin:auto;"> -->
                 <div class="center" style="width:600px;">
                     <table>
                         <tr style="height:50px;">

@@ -37,7 +37,9 @@ if(chk($_SESSION, "buy_complete_ticket") and $_SESSION["buy_complete_ticket"] < 
     $buy_result = $_SESSION["member"]->buy($total, $itemcode_list, $shipping_type); // 購入
     // !!!!! 注意: この関数は内部でトランザクションを使用していないため、商品テーブルに商品が追加されないが、総購入金額だけ上書きされる場合あり！でも今はその記述は割愛！
 
-
+    if(!$buy_result):
+        Log::output(BUY_COMPLETE, "商品が購入されました");
+    endif;
 
 
 elseif(chk($_POST, "mode", "from_buy_confirm")):
@@ -69,6 +71,9 @@ endif;
             <?php elseif($access_chk): ?>
 
                 <?php if($buy_result === null): // null ならいろいろ成功している、袖なかったらエラーが入っている ?>
+
+                    <h6>購入が完了しました(＊'ω'＊)</h6>
+
                 <?php else: ?>
                     <p>DBアクセスエラーが発生しました。大変ご迷惑をおかけします。</p>
                     <p>エラー内容 : <?=$buy_result?></p>
