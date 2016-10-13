@@ -24,10 +24,6 @@ if(chk($_POST, "mode", "from_this")):
     // このページのログインフォームから来た時の処理
     $name = chk($_POST, "name");
     $password = chk($_POST, "password");
-    // $name = htmlspecialchars(chk($_POST, "name")); // <--htmlspecialchars()は使うべきなの？
-    // $password = htmlspecialchars(chk($_POST, "password")); // <--htmlspecialchars()は使うべきなの？
-    // var_dump($name);
-    // var_dump($password);
 
     // ゲストクラスよりログインを試みる
     $user = new Guest;
@@ -37,12 +33,12 @@ if(chk($_POST, "mode", "from_this")):
         $refresh_flg = true;
 
         // ゲストカートの合併 + ゲストカートのクリア ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
-        if(!empty($_SESSION["guest"]["cart"])){
-            foreach ($_SESSION["guest"]["cart"] as $value) {
-                $_SESSION["member"]->cart[] = $value;
+        if(!empty($_SESSION["guest_cart"])){
+            foreach ($_SESSION["guest_cart"] as $value) {
+                $_SESSION["member_cart"][$_SESSION["member"]->userID][] = $value;
             }
         }
-        $_SESSION["guest"]["cart"] = array();
+        $_SESSION["guest_cart"] = array();
         // ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
 
     }else{                          // 失敗
@@ -52,10 +48,8 @@ if(chk($_POST, "mode", "from_this")):
 
 elseif(chk($_POST, "mode", "from_logout_confirm")):
     // ログアウト確認から飛んできたので、ログアウトする
-    // $_SESSION = array(); // 空にすることで ["login"] ["member"] ともに消失 すべてのカートも消去
-    $_SESSION["login"] = false;
-    $_SESSION["member_cart"][$_SESSION["member"]->userID] = $_SESSION["member"]->cart;
-    $_SESSION["member"] = null; // メンバーのインスタンスを削除
+    $_SESSION["login"] = false; // ログアウト
+    $_SESSION["member"] = null; // メンバークラスのインスタンスを削除
     $from_logout_confirm = true;
 
 elseif(!empty($_SESSION["member"])):
@@ -157,19 +151,22 @@ $return_link = save_and_create_return_link();
             <?php endif; ?>
 
 
+            <?php Html::hr() ?>
+
+
             <?php if(chk($_SESSION, "search")): ?>
                     <!-- 検索画面に戻るボタン -->
-                    <form class="center space20px" action="<?=SEARCH?>" method="get">
+                    <form class="right space20px" action="<?=SEARCH?>" method="get">
                         <input type="hidden" name="mode" value="last_searched">
                         <button type="submit">検索ページに戻る</button>
                     </form>
             <?php endif; ?>
 
             <!-- 確認用 -->
-            <p>
+            <!-- <p>
                 <br>現在のreturn_link:<br>
                 <?php var_dump($return_link); ?>
-            </p>
+            </p> -->
 
         </article>
 

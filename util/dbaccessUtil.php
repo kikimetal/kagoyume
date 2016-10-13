@@ -72,8 +72,9 @@ class DBaccess {
 
 
     // 第１引数にテーブル名、第２引数に挿入したい カラム名 => 値 になるように組まれた配列を入れる
-    // 成功すれば配列を、エラーならエラーを返す
-    public function insert($table, $array) {
+    // 第３引数は登録する現在時刻のカラム名（newDate or buyDate）
+    // 成功すれば null を、エラーならエラーを返す
+    public function insert($table, $array, $create_time) {
         try {
             $pdo = $this->pdo_connect();
             $sql = "INSERT INTO $table";
@@ -92,7 +93,7 @@ class DBaccess {
                     $sql .= $key." ";
                     $and_flg = true;
                 }
-                $sql .= ", newDate)";
+                $sql .= ", $create_time)";
 
                 $sql .= " VALUES";
                 $sql .= " (";
@@ -108,6 +109,7 @@ class DBaccess {
             }
 
             var_dump($sql);
+
             $stmt = $pdo->prepare($sql);
 
             if($array){
@@ -124,6 +126,30 @@ class DBaccess {
             $this->pdo_disconnect($pdo);
             return $e->getMessage();
         }
+    }
+
+    // 第１引数にテーブル名、第２引数にアップデートするカラム名 第３引数にアップデーとする値
+    // 第４引数に そのテーブルでの主キーカラムのネーム、第５にその値
+    // 成功で null エラーでエラーを返す
+    public function update($table, $column, $new_value, $p_key_name, $p_key_value){
+        try {
+            $pdo = $this->pdo_connect();
+            $sql = "UPDATE $table SET $column = :$column WHERE $p_key_name = :$p_key_name";
+
+            var_dump($sql);
+            $stmt = $pdo->prepare($sql);
+
+            $stmt->bindValue(":$column", $new_value, PDO::PARAM_INT);
+            $stmt->bindValue(":$p_key_name", $p_key_value, PDO::PARAM_INT);
+
+            $stmt->execute();
+            return null;
+
+        } catch (PDOException $e) {
+            $this->pdo_disconnect($pdo);
+            return $e->getMessage();
+        }
+
     }
 
 

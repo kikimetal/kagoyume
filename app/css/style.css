@@ -344,3 +344,7 @@ form.login > p {
 .border {
     border: 1px solid red;
 }
+
+div.hr {
+    border-bottom: 1px solid pink;
+}

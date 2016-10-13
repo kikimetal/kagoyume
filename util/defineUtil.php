@@ -16,8 +16,8 @@ const CART = "cart.php";
 const BUY_CONFIRM = "buy_confirm.php";
 const BUY_COMPLETE = "buy_complete.php";
 
-const MYDATA = "mydata.php";
-const MYDATA_UPDATE = "mydata_update.php";
+const MY_DATA = "my_data.php";
+const MY_DATA_UPDATE = "my_data_update.php";
 const MY_UPDATE_RESULT = "my_update_result.php";
 const MY_DELETE = "my_delete.php";
 const MY_DELETE_RESULT = "my_delete_result.php";

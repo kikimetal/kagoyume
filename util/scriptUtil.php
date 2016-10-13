@@ -8,10 +8,7 @@ require_once "defineUtil.php";
 // ☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★----------------------
 // ゲスト含む全ユーザー
 abstract class User {
-    public $name;
-    // public function search_product() {}
-    abstract public function add_cart();
-    abstract public function delete_cart();
+    // やっぱやめた...
 }
 
 
@@ -22,31 +19,64 @@ class Member extends User {
     public $mail;
     public $address;
     public $total;
-    public $cart;
+    // public $cart;
     public function __construct($array=array()) { // 引数にDBから拾ったレコード array[0] を入れてあげること！
         $this->userID = chk($array, "userID");
         $this->name = chk($array, "name");
         $this->mail = chk($array, "mail");
         $this->address = chk($array, "address");
         $this->total = chk($array, "total");
-        $this->cart = chk($_SESSION["member_cart"], $this->userID);
+        // $this->cart = chk($_SESSION["member_cart"], $this->userID);
     }
     // ログインユーザーのログアウト処理 は _SESSION = array() で済むから関数いらない
 
 
-    // 買い物かごへ追加
-    public function add_cart() {
+    public function buy($total, $itemcode_list, $shipping_type){
+        // 返り値となるエラー
+        $error = null;
+        // メンバークラスのインスタンス内の総購入金額を更新
+        $this->total += $total;
 
-    }
-    // 買い物かごから削除
-    public function delete_cart() {
+        $db_access = new DBaccess;
+        // DBの総購入金額の更新  ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
+        $result = $db_access->update("user_t", "total", $this->total, "userID", $this->userID);
+        // ☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.☆*:.★*:.
+        if($result){ // エラーならエラーが返ってきてる
+            return $result;
+        }
 
-    }
-    // かごの中身を買う
-    public function buy() {
+        // 商品購入履歴の追加  ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
+        $insert_params_arr = array();
+        foreach ($itemcode_list as $itemcode):
+            $insert_params_arr[] = array(
+                                "userID" => $_SESSION["member"]->userID,
+                                "itemCode" => $itemcode,
+                                "type" => $shipping_type
+                                );
+        endforeach;
 
+        $insert_result = array();
+        foreach ($insert_params_arr as $insert_params):
+            $insert_result[] = $db_access->insert("buy_t", $insert_params, "buyDate");
+            // DBアクセスが連続で複数回行われる、これは一括して１回のアクセスで挿入できるようにしたいが、も少し時間が必要、やればできるので今回は割愛
+        endforeach;
+
+        foreach ($insert_result as $key => $value):
+            if($value){
+                return $value; // 挿入中にエラーが出た場合 // エラ−最初の１個しか返せないんだけど今回は許して...
+            }
+        endforeach; // ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*
+
+        return null;
     }
-}
+
+    // 購入履歴ゲット
+    public function get_my_history(){
+        $db_access = new DBaccess;
+        $db_access->select();
+    }
+
+} // class Member
 
 // ゲストさん
 class Guest extends User {
@@ -82,15 +112,13 @@ class Guest extends User {
     // 挿入成功で null エラーでエラーを返す
     public function entry($array) {
         $db_access = new DBaccess;
-        $result = $db_access->insert("user_t", $array);
+        $result = $db_access->insert("user_t", $array, "newDate");
 
         // var_dump($result);
 
         return $result;
 
     }
-    public function add_cart() {}
-    public function delete_cart() {}
 }
 // --------------------☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
 
@@ -128,7 +156,7 @@ class Html {
             <nav class="center user_nav">
                 <ul>
                     <li><a href="<?=CART?>"><div>ようこそ! <?= $_SESSION["member"]->name ?>さん!(カート)</div></a></li>
-                    <li><a href="<?=MYDATA?><?php if($page){echo "?from=".$page;} ?>"><div>マイページ</div></a></li>
+                    <li><a href="<?=MY_DATA?><?php if($page){echo "?from=".$page;} ?>"><div>マイページ</div></a></li>
                     <li><a href="<?=LOGIN?><?php if($page){echo "?from=".$page;} ?>"><div>ログアウト</div></a></li>
                 </ul>
             </nav>
@@ -153,18 +181,24 @@ class Html {
         </header>
         <?php
     }
-    public static function address() {
+    public static function address(){
         ?>
         <address class="">
             2016 all rights reserved kikimetal.com from little-twin-stars.
         </address>
         <?php
     }
-    public static function wrapper() {
+    public static function wrapper(){
         ?>
         <aside class="design">
             <div class="wrapper"></div>
         </aside>
+        <?php
+    }
+
+    public static function hr(){
+        ?>
+        <div class="hr space20px"></div>
         <?php
     }
 }
@@ -172,14 +206,14 @@ class Html {
 // ☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★----------------------
 // 引数に入れられたstringをlog.txt へ追記。$str末尾で改行。
 class Log {
-    public static function output($str) {
+    public static function output($str, $str02=null) {
         session_start_anyway();
         if(!empty($_SESSION["login"]) and !empty($_SESSION["member"]->name)){
             $name = $_SESSION["member"]->name;
         }else{
             $name = "Guest";
         }
-        $log = "[".date("Y-m-d H:i:s", time())."][user:".$name."][access:".$str."]";
+        $log = "[".date("Y-m-d H:i:s", time())."][user:".$name."][access:".$str."]".$str02;
         $txt = fopen(LOGS_DIR, "a");
         fwrite($txt, $log.PHP_EOL);
         fclose($txt);
@@ -241,11 +275,11 @@ function save_and_create_return_link(){ // クエリストリングの ?from= �
                     $link = ITEM."?itemcode=".$_SESSION["last_searched_itemcode"];
                     break;
             case CART:
-                    $link = CART;
+            case MY_DATA:
+            case MY_HISTORY:
+                    $link = $page;
                     break;
-            case MYDATA:
-                    $link = MYDATA;
-                    break;
+
 
             // case REGISTRATION:
             // case REGISTRATION_CONFIRM:

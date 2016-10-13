@@ -27,6 +27,8 @@ if(
     $user = new Guest;
     $user->entry($confirm_list);
 
+    Log::output(REGISTRATION_COMPLETE, "新規ユーザーを登録");
+
 } // endif
 unset($_SESSION["registration"]); // 登録に関するすべての情報を破棄 // もちろんチケットも失う
 ?>

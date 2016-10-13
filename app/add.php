@@ -25,14 +25,14 @@ if(chk($_POST, "mode", "from_item")){
     $item["price"] = chk($_POST, "price");
 
     if(!empty($_SESSION["login"])){
-        $_SESSION["member"]->cart[] = $item;
+        $_SESSION["member_cart"][$_SESSION["member"]->userID][] = $item;
     }else{
-        $_SESSION["guest"]["cart"][] = $item; // これで連続して　かつ常に次の要素番号に保存される
+        $_SESSION["guest_cart"][] = $item; // これで連続して　かつ常に次の要素番号に保存される
     }
 
     // すでに追加済みです！の分岐処理があると良いか？
 }
-var_dump($_SESSION["guest"]["cart"]);
+// var_dump($_SESSION["guest_cart"]);
 ?>
 <!-- ☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-*☆*-*★*-* -->
 
